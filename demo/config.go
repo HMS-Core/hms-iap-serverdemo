@@ -35,7 +35,7 @@ func GetDefaultConfig() *DemoConfig {
   // product token url
   // demoConfig.tokenUrl = "https://oauth-login.cloud.huawei.com/oauth2/v2/token";
 
-  demoConfig.TokenUrl = "http://exampleserver/_mockserver_/oauth2/v2/token"
+  demoConfig.TokenUrl = "http://exampleserver/_mockserver_/oauth2/v3/token"
   return &demoConfig
 }
 
