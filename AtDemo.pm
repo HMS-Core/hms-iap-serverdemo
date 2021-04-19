@@ -32,7 +32,7 @@ sub getAppAT {
     print "getAppAT\n";
     my $client_secret = "appsecret"; # TODO: your client secret
     my $client_id = "1234567"; # TODO: your app Id
-    my $tokenUrl = "https://oauth-login.cloud.huawei.com/oauth2/v2/token"; # TODO: token url to get the authorization
+    my $tokenUrl = "https://oauth-login.cloud.huawei.com/oauth2/v3/token"; # TODO: token url to get the authorization
 
     my $grant_type = "client_credentials";
     my $query_body = [
