@@ -48,7 +48,7 @@ public class AtDemo {
     private static final String CLIENT_ID = "1234567"; // your app id
 
     // token url to get the authorization
-    private static final String TOKEN_URL = "https://oauth-login.cloud.huawei.com/oauth2/v2/token";
+    private static final String TOKEN_URL = "https://oauth-login.cloud.huawei.com/oauth2/v3/token";
 
 
     /**
