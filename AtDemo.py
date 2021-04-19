@@ -26,7 +26,7 @@ clientSecret = "appsecret"
 # your app id
 clientId = "1234567"
 # token url to get the authorization
-TokenUrl = "https://oauth-login.cloud.huawei.com/oauth2/v2/token"
+TokenUrl = "https://oauth-login.cloud.huawei.com/oauth2/v3/token"
 # The accessToken.
 accessToken = None
 
