@@ -21,7 +21,7 @@ class AtDemo
 
   # TODO: The values of (clientId, clientSecret, TokenUrl) should be replaced with the actual one.
   # token url to get the authorization
-  TOKEN_URL = 'https://oauth-login.cloud.huawei.com/oauth2/v2/token'
+  TOKEN_URL = 'https://oauth-login.cloud.huawei.com/oauth2/v3/token'
   # your client secret
   CLIENT_SECRET = '123'
   # the client id is your APP ID
