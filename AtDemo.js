@@ -20,7 +20,7 @@ const querystring = require('querystring');
 
 const client_secret = 'appsecret';   // your client secret
 const client_id = '1234567';         // your app id
-var tokenUrl = 'https://oauth-login.cloud.huawei.com/oauth2/v2/token'; //token url to get the authorization
+var tokenUrl = 'https://oauth-login.cloud.huawei.com/oauth2/v3/token'; //token url to get the authorization
 
 const grant_type = 'client_credentials';
 const atOption={
