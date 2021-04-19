@@ -18,7 +18,7 @@
 class AtDemo {
     const CLIENT_SECRET = "secret"; // your app secret
     const CLIENT_ID = "123456"; //your appId
-    const TOKEN_URL = "https://oauth-login.cloud.huawei.com/oauth2/v2/token"; //token url to get the authorization
+    const TOKEN_URL = "https://oauth-login.cloud.huawei.com/oauth2/v3/token"; //token url to get the authorization
     private static  $accessToken = null;
 
     /**
