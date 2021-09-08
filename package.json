@@ -1,0 +1,15 @@
+{
+  "name": "iap-nodejs-sample",
+  "version": "1.0.0",
+  "description": "",
+  "main": "AtDemo.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "iap",
+  "license": "ISC",
+  "dependencies": {
+    "node-rsa": "^1.0.5",
+    "request": "^2.88.1"
+  }
+}
