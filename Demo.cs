@@ -128,10 +128,10 @@ namespace IapDemo
             return headers;
         }
 
-        public static Boolean verifyRsaSign(String content, String sign, String publicKey)
+        public static Boolean verifyRsaSign(String content, String sign, String publicKey, String signatureAlgorithm)
         {
             bool checkRet = false;
-            using (var rsaProv = new RSACryptoServiceProvider())
+            using (var rsaProv = (RSA)RSA.Create())
             {
                 byte[] contentBytes = Encoding.UTF8.GetBytes(content);
                 byte[] signBytes = Convert.FromBase64String(sign);
@@ -140,7 +140,15 @@ namespace IapDemo
                 {
                     int readBytes = 0;
                     rsaProv.ImportSubjectPublicKeyInfo(publicKeyBytes, out readBytes);
-                    checkRet = rsaProv.VerifyData(contentBytes, signBytes, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                    Console.WriteLine("VerifyData"+signatureAlgorithm);
+                    if(signatureAlgorithm.Equals("SHA256WithRSA/PSS"))
+                    {
+                        checkRet = rsaProv.VerifyData(contentBytes, signBytes, HashAlgorithmName.SHA256, RSASignaturePadding.Pss);
+                    }else if (signatureAlgorithm.Equals("SHA256WithRSA"))
+                    {
+                        checkRet = rsaProv.VerifyData(contentBytes, signBytes, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                    }
+                    
                 }
                 catch (CryptographicException e)
                 {
@@ -148,7 +156,7 @@ namespace IapDemo
                 }
                 finally
                 {
-                    rsaProv.PersistKeyInCsp = false;
+                    rsaProv.Clear();
                 }
             }
             return checkRet;
@@ -375,7 +383,7 @@ namespace IapDemo
         public static void dealNotification(String information)
         {
             var request = JsonSerializer.Deserialize<NotificationRequest>(information);
-            var checkRet = AtDemo.verifyRsaSign(request.statusUpdateNotification, request.notifycationSignature, DemoConfig.getDefaultConfig().applicationPublicKey);
+            var checkRet = AtDemo.verifyRsaSign(request.statusUpdateNotification, request.notifycationSignature, DemoConfig.getDefaultConfig().applicationPublicKey, "SHA256WithRSA");
             if (!checkRet)
             {
                 Console.WriteLine("rsa sign check fail");
