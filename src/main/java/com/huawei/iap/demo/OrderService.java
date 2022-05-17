@@ -17,7 +17,7 @@
 
 package com.huawei.iap.demo;
 
-import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +35,8 @@ public class OrderService {
 
     // site for telecom carrier
     public static final String TOBTOC_SITE_URL = "https://orders-at-dre.iap.dbankcloud.com";
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     public static String getRootUrl(Integer accountFlag) {
         if (accountFlag != null && accountFlag == 1) {
@@ -54,7 +56,7 @@ public class OrderService {
         bodyMap.put("purchaseToken", purchaseToken);
         bodyMap.put("productId", productId);
 
-        String msgBody = JSONObject.toJSONString(bodyMap);
+        String msgBody = MAPPER.writeValueAsString(bodyMap);
 
         String response = AtDemo.httpPost(getRootUrl(accountFlag) + "/applications/purchases/tokens/verify",
             "application/json; charset=UTF-8", msgBody, 5000, 5000, headers);
@@ -77,7 +79,7 @@ public class OrderService {
         bodyMap.put("type", type);
         bodyMap.put("continuationToken", continuationToken);
 
-        String msgBody = JSONObject.toJSONString(bodyMap);
+        String msgBody = MAPPER.writeValueAsString(bodyMap);
 
         String response = AtDemo.httpPost(getRootUrl(accountFlag) + "/applications/v2/purchases/cancelledList",
             "application/json; charset=UTF-8", msgBody, 5000, 5000, headers);
@@ -85,7 +87,7 @@ public class OrderService {
         System.out.println(response);
     }
 
-    public static void confirmPurchase(String purchaseToken, String productId,Integer accountFlag) throws Exception {
+    public static void confirmPurchase(String purchaseToken, String productId, Integer accountFlag) throws Exception {
         // fetch the App Level AccessToken
         String appAt = AtDemo.getAppAT();
         // construct the Authorization in Header
@@ -96,10 +98,10 @@ public class OrderService {
         bodyMap.put("purchaseToken", purchaseToken);
         bodyMap.put("productId", productId);
 
-        String msgBody = JSONObject.toJSONString(bodyMap);
+        String msgBody = MAPPER.writeValueAsString(bodyMap);
 
         String response = AtDemo.httpPost(getRootUrl(accountFlag) + "/applications/v2/purchases/confirm",
-                "application/json; charset=UTF-8", msgBody, 5000, 5000, headers);
+            "application/json; charset=UTF-8", msgBody, 5000, 5000, headers);
         // TODO: display the response as string in console, you can replace it with your business logic.
         System.out.println(response);
     }

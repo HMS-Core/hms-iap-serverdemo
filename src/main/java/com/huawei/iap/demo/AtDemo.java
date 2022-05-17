@@ -17,7 +17,8 @@
 
 package com.huawei.iap.demo;
 
-import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -50,6 +51,8 @@ public class AtDemo {
     // token url to get the authorization
     private static final String TOKEN_URL = "https://oauth-login.cloud.huawei.com/oauth2/v3/token";
 
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
     /**
      * The accessToken.
      */
@@ -57,6 +60,7 @@ public class AtDemo {
 
     /**
      * Gets App Level AccessToken.
+     *
      * @return the App Level AccessToken
      * @throws Exception the exception
      */
@@ -67,8 +71,8 @@ public class AtDemo {
             URLEncoder.encode(CLIENT_SECRET, "UTF-8"), CLIENT_ID);
         String response =
             httpPost(TOKEN_URL, "application/x-www-form-urlencoded; charset=UTF-8", msgBody, 5000, 5000, null);
-        JSONObject obj = JSONObject.parseObject(response);
-        accessToken = obj.getString("access_token");
+        JsonNode responseNode = MAPPER.readValue(response, JsonNode.class);
+        accessToken = responseNode.path("access_token").asText();
 
         // TODO: display the accessToken in console, you can remove it
         System.out.println(accessToken);
@@ -93,11 +97,12 @@ public class AtDemo {
 
     /**
      * Http post function.
-     * @param httpUrl        the http url
-     * @param data           the data
+     *
+     * @param httpUrl the http url
+     * @param data the data
      * @param connectTimeout the connect timeout
-     * @param readTimeout    the read timeout
-     * @param headers        the headers
+     * @param readTimeout the read timeout
+     * @param headers the headers
      * @return the response as string
      * @throws IOException the io exception
      */

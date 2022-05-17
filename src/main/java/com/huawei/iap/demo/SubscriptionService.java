@@ -17,7 +17,7 @@
 
 package com.huawei.iap.demo;
 
-import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +35,8 @@ public class SubscriptionService {
 
     // site for telecom carrier
     public static final String TOBTOC_SITE_URL = "https://subscr-at-dre.iap.dbankcloud.com";
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     public static String getRootUrl(Integer accountFlag) {
         if (accountFlag != null && accountFlag == 1) {
@@ -55,7 +57,7 @@ public class SubscriptionService {
         bodyMap.put("subscriptionId", subscriptionId);
         bodyMap.put("purchaseToken", purchaseToken);
 
-        String msgBody = JSONObject.toJSONString(bodyMap);
+        String msgBody = MAPPER.writeValueAsString(bodyMap);
 
         String response = AtDemo.httpPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/get",
             "application/json; charset=UTF-8", msgBody, 5000, 5000, headers);
@@ -75,7 +77,7 @@ public class SubscriptionService {
         bodyMap.put("subscriptionId", subscriptionId);
         bodyMap.put("purchaseToken", purchaseToken);
 
-        String msgBody = JSONObject.toJSONString(bodyMap);
+        String msgBody = MAPPER.writeValueAsString(bodyMap);
 
         String response = AtDemo.httpPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/stop",
             "application/json; charset=UTF-8", msgBody, 5000, 5000, headers);
@@ -97,7 +99,7 @@ public class SubscriptionService {
         bodyMap.put("currentExpirationTime", currentExpirationTime);
         bodyMap.put("desiredExpirationTime", desiredExpirationTime);
 
-        String msgBody = JSONObject.toJSONString(bodyMap);
+        String msgBody = MAPPER.writeValueAsString(bodyMap);
 
         String response = AtDemo.httpPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/delay",
             "application/json; charset=UTF-8", msgBody, 5000, 5000, headers);
@@ -117,7 +119,7 @@ public class SubscriptionService {
         bodyMap.put("subscriptionId", subscriptionId);
         bodyMap.put("purchaseToken", purchaseToken);
 
-        String msgBody = JSONObject.toJSONString(bodyMap);
+        String msgBody = MAPPER.writeValueAsString(bodyMap);
 
         String response = AtDemo.httpPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/returnFee",
             "application/json; charset=UTF-8", msgBody, 5000, 5000, headers);
@@ -137,7 +139,7 @@ public class SubscriptionService {
         bodyMap.put("subscriptionId", subscriptionId);
         bodyMap.put("purchaseToken", purchaseToken);
 
-        String msgBody = JSONObject.toJSONString(bodyMap);
+        String msgBody = MAPPER.writeValueAsString(bodyMap);
 
         String response = AtDemo.httpPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/withdrawal",
             "application/json; charset=UTF-8", msgBody, 5000, 5000, headers);
