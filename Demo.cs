@@ -25,6 +25,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Net.Security;
+using System.Runtime.InteropServices;
 
 namespace IapDemo
 {
@@ -53,9 +55,7 @@ namespace IapDemo
             demoConfig.applicationPublicKey = "public key, base64 encode";
 
             // product token url
-            // demoConfig.tokenUrl = "https://oauth-login.cloud.huawei.com/oauth2/v3/token";
-
-            demoConfig.tokenUrl = "http://exampleserver/_mockserver_/oauth2/v3/token";
+            demoConfig.tokenUrl = "https://oauth-login.cloud.huawei.com/oauth2/v3/token";
 
 
             return demoConfig;
@@ -78,7 +78,7 @@ namespace IapDemo
             String msgBody = String.Format("grant_type={0}&client_secret={1}&client_id={2}", WebUtility.UrlEncode(grant_type),
                 WebUtility.UrlEncode(demoConfig.clientSecret), WebUtility.UrlEncode(demoConfig.clientId));
 
-            String retString = httpPost(demoConfig.tokenUrl, "application/x-www-form-urlencoded", msgBody, 5, null);
+            String retString = httpPost(demoConfig.tokenUrl, "application/x-www-form-urlencoded", msgBody, 5, null, 0);
 
             if (retString.IndexOf("access_token") != -1)
             {
@@ -92,9 +92,26 @@ namespace IapDemo
             }
         }
 
-        public static String httpPost(String httpUrl, String contentType, String requestBody, int timeOut, HttpRequestHeaders headers)
+        public static String httpPost(String httpUrl, String contentType, String requestBody, int timeOut, HttpRequestHeaders headers, int enhancedSafety)
         {
+            // if your OS is Windows, you cannot specify the Cipher Suites with code, please make sure the local OS configuration support the specified cipher suites and TLS version
             var client = new HttpClient();
+            // if your OS is Linux or OSX, you can specify the Cipher Suites like this
+            if (enhancedSafety == 1 && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                var sslOptions = new SslClientAuthenticationOptions {
+                    CipherSuitesPolicy  = new CipherSuitesPolicy(new List<TlsCipherSuite>{ 
+                        TlsCipherSuite.TLS_AES_128_GCM_SHA256,
+                        TlsCipherSuite.TLS_AES_256_GCM_SHA384,
+                        TlsCipherSuite.TLS_CHACHA20_POLY1305_SHA256,
+                        TlsCipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+                        TlsCipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+                        TlsCipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+                        TlsCipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+                    })
+                };
+                var socketsHttpHandler = new SocketsHttpHandler { SslOptions = sslOptions };
+                client = new HttpClient(socketsHttpHandler, true);
+            }
             client.Timeout = TimeSpan.FromSeconds(timeOut);
 
             if (headers != null)
@@ -146,7 +163,7 @@ namespace IapDemo
                         checkRet = rsaProv.VerifyData(contentBytes, signBytes, HashAlgorithmName.SHA256, RSASignaturePadding.Pss);
                     }else if (signatureAlgorithm.Equals("SHA256WithRSA"))
                     {
-                        checkRet = rsaProv.VerifyData(contentBytes, signBytes, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                    checkRet = rsaProv.VerifyData(contentBytes, signBytes, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
                     }
                     
                 }
@@ -168,10 +185,10 @@ namespace IapDemo
         public static String getRootUrl(int accountFlag) {
                 if (accountFlag == 1) {
                    // site for telecom carrier
-                    return "https://orders-at-dre.iap.dbankcloud.com";
+                    return "https://orders-at-dre.iap.cloud.huawei.eu";
                 }
                 // TODO: replace the (ip:port) to the real one,
-                return "http://ip:port";
+                return "https://ip:port";
             }
         public static void verifyToken(String purchaseToken, String productId,int accountFlag)
         {
@@ -180,7 +197,7 @@ namespace IapDemo
             bodyMap.Add("purchaseToken", purchaseToken);
             bodyMap.Add("productId", productId);
             var bodyString = JsonSerializer.Serialize(bodyMap);
-            String responseString = AtDemo.httpPost(getRootUrl(accountFlag) + "/applications/purchases/tokens/verify", "application/json", bodyString, 5, requestHeaders);
+            String responseString = AtDemo.httpPost(getRootUrl(accountFlag) + "/applications/purchases/tokens/verify", "application/json", bodyString, 5, requestHeaders, 1);
 
             // TODO: display the response as string in console, you can replace it with your business logic.
             Console.WriteLine(responseString);
@@ -199,7 +216,7 @@ namespace IapDemo
             bodyMap.Add("continuationToken", continuationToken.ToString());
             var bodyString = JsonSerializer.Serialize(bodyMap);
 
-            String responseString = AtDemo.httpPost(getRootUrl(accountFlag) + "/applications/v2/purchases/cancelledList", "application/json", bodyString, 5, requestHeaders);
+            String responseString = AtDemo.httpPost(getRootUrl(accountFlag) + "/applications/v2/purchases/cancelledList", "application/json", bodyString, 5, requestHeaders, 1);
 
             // TODO: display the response as string in console, you can replace it with your business logic.
             Console.WriteLine(responseString);
@@ -216,7 +233,7 @@ namespace IapDemo
 
             var bodyString = JsonSerializer.Serialize(bodyMap);
 
-            String responseString = AtDemo.httpPost(getRootUrl(accountFlag) + "/applications/v2/purchases/confirm", "application/json", bodyString, 5, requestHeaders);
+            String responseString = AtDemo.httpPost(getRootUrl(accountFlag) + "/applications/v2/purchases/confirm", "application/json", bodyString, 5, requestHeaders, 1);
 
             // TODO: display the response as string in console, you can replace it with your business logic.
             Console.WriteLine(responseString);
@@ -229,10 +246,10 @@ namespace IapDemo
         public static String getRootUrl(int accountFlag) {
             if ( accountFlag == 1) {
                // site for telecom carrier
-                return "https://subscr-at-dre.iap.dbankcloud.com";
+                return "https://subscr-at-dre.iap.cloud.huawei.eu";
             }
             // TODO: replace the (ip:port) to the real one,
-            return "http://ip:port";
+            return "https://ip:port";
         }
         public static void getSubscription(string subscriptionId, string purchaseToken,int accountFlag)
         {
@@ -247,7 +264,7 @@ namespace IapDemo
             var config = DemoConfig.getDefaultConfig();
 
             String responseString = AtDemo.httpPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/get",
-            "application/json", bodyString, 5, headers);
+            "application/json", bodyString, 5, headers, 1);
 
             // TODO: display the response as string in console, you can replace it with your business logic.
             Console.WriteLine(responseString);
@@ -265,7 +282,7 @@ namespace IapDemo
             var bodyString = JsonSerializer.Serialize(bodyMap);
 
             String responseString = AtDemo.httpPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/stop",
-                "application/json", bodyString, 5, headers);
+                "application/json", bodyString, 5, headers, 1);
 
             // TODO: display the response as string in console, you can replace it with your business logic.
             Console.WriteLine(responseString);
@@ -285,7 +302,7 @@ namespace IapDemo
             var bodyString = JsonSerializer.Serialize(bodyMap);
 
             String responseString = AtDemo.httpPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/delay",
-            "application/json", bodyString, 5, headers);
+            "application/json", bodyString, 5, headers, 1);
 
             // TODO: display the response as string in console, you can replace it with your business logic.
             Console.WriteLine(responseString);
@@ -303,7 +320,7 @@ namespace IapDemo
             var bodyString = JsonSerializer.Serialize(bodyMap);
 
             String responseString = AtDemo.httpPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/returnFee",
-            "application/json", bodyString, 5, headers);
+            "application/json", bodyString, 5, headers, 1);
 
             // TODO: display the response as string in console, you can replace it with your business logic.
             Console.WriteLine(responseString);
@@ -321,7 +338,7 @@ namespace IapDemo
             var bodyString = JsonSerializer.Serialize(bodyMap);
 
             String responseString = AtDemo.httpPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/withdrawal",
-                "application/json", bodyString, 5, headers);
+                "application/json", bodyString, 5, headers, 1);
 
             // TODO: display the response as string in console, you can replace it with your business logic.
             Console.WriteLine(responseString);
