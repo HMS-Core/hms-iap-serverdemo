@@ -37,7 +37,7 @@ var AtDemo = &AtClient{}
 func (atDemo *AtClient) GetAppAt() (string, error) {
   demoConfig := GetDefaultConfig()
   urlValue := url.Values{"grant_type": {"client_credentials"}, "client_secret": {demoConfig.ClientSecret}, "client_id": {demoConfig.ClientId}}
-  resp, err := RequestHttpClient.PostForm(demoConfig.TokenUrl, urlValue)
+  resp, err := AtRequestHttpClient.PostForm(demoConfig.TokenUrl, urlValue)
   if err != nil {
     return "", err
   }

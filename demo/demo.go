@@ -17,59 +17,80 @@
 package demo
 
 import (
-  "bytes"
-  "crypto"
-  "crypto/rsa"
-  "crypto/sha256"
-  "crypto/x509"
-  "encoding/base64"
-  "encoding/json"
-  "io/ioutil"
-  "net/http"
-  "time"
+	"bytes"
+	"crypto"
+	"crypto/rsa"
+	"crypto/sha256"
+	"crypto/tls"
+	"crypto/x509"
+	"encoding/base64"
+	"encoding/json"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"time"
 )
 
 // default http client with 5 seconds timeout
-var RequestHttpClient = http.Client{Timeout: time.Second * 5}
+var AtRequestHttpClient = http.Client{Timeout: time.Second * 5}
+
+var RequestHttpClient = http.Client{
+	Timeout: time.Second * 5,
+	Transport: &http.Transport{
+		TLSClientConfig: &tls.Config{
+			CipherSuites: []uint16{
+				tls.TLS_AES_128_GCM_SHA256,
+				tls.TLS_AES_256_GCM_SHA384,
+				tls.TLS_CHACHA20_POLY1305_SHA256,
+				tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+				tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+				tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+				tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+			},
+			MinVersion: tls.VersionTLS12,
+			MaxVersion: tls.VersionTLS13,
+		},
+	},
+}
 
 func SendRequest(url string, bodyMap map[string]string) (string, error) {
-  authHeaderString, err := BuildAuthorization()
-  if err != nil {
-    return "", err
-  }
-  bodyString, err := json.Marshal(bodyMap)
-  if err != nil {
-    return "", err
-  }
+	authHeaderString, err := BuildAuthorization()
+	if err != nil {
+		return "", err
+	}
+	bodyString, err := json.Marshal(bodyMap)
+	if err != nil {
+		return "", err
+	}
 
-  req, err := http.NewRequest("POST", url, bytes.NewReader(bodyString))
-  if err != nil {
-    return "", err
-  }
-  req.Header.Set("Content-Type", "application/json; charset=UTF-8")
-  req.Header.Set("Authorization", authHeaderString)
-  response, err := RequestHttpClient.Do(req)
-  defer response.Body.Close()
-  bodyBytes, err := ioutil.ReadAll(response.Body)
-  if err != nil {
-    return "", err
-  }
-  return string(bodyBytes), nil
+	req, err := http.NewRequest("POST", url, bytes.NewReader(bodyString))
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Content-Type", "application/json; charset=UTF-8")
+	req.Header.Set("Authorization", authHeaderString)
+	response, err := RequestHttpClient.Do(req)
+	defer response.Body.Close()
+	bodyBytes, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return "", err
+	}
+	return string(bodyBytes), nil
 }
 
 func VerifyRsaSign(content string, sign string, publicKey string) error {
-  publicKeyByte, err := base64.StdEncoding.DecodeString(publicKey)
-  if err != nil {
-    return err
-  }
-  pub, err := x509.ParsePKIXPublicKey(publicKeyByte)
-  if err != nil {
-    return err
-  }
-  hashed := sha256.Sum256([]byte(content))
-  signature, err := base64.StdEncoding.DecodeString(sign)
-  if err != nil {
-    return err
-  }
-  return rsa.VerifyPKCS1v15(pub.(*rsa.PublicKey), crypto.SHA256, hashed[:], signature)
+	publicKeyByte, err := base64.StdEncoding.DecodeString(publicKey)
+	if err != nil {
+		return err
+	}
+	pub, err := x509.ParsePKIXPublicKey(publicKeyByte)
+	if err != nil {
+		return err
+	}
+	hashed := sha256.Sum256([]byte(content))
+	signature, err := base64.StdEncoding.DecodeString(sign)
+	if err != nil {
+		return err
+	}
+	return rsa.VerifyPKCS1v15(pub.(*rsa.PublicKey), crypto.SHA256, hashed[:], signature)
 }
