@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 功能描述
+ * Order服务对接工具
  *
  * @author iap
  * @since 2019-12-27
@@ -31,10 +31,10 @@ import java.util.Map;
 public class OrderService {
     // TODO: replace the (ip:port) to the real one, and if the protocol is https, you should deal with the license
     // yourself.
-    public static final String TOC_SITE_URL = "http://ip:port";
+    public static final String TOC_SITE_URL = "https://ip:port";
 
     // site for telecom carrier
-    public static final String TOBTOC_SITE_URL = "https://orders-at-dre.iap.dbankcloud.com";
+    public static final String TOBTOC_SITE_URL = "https://orders-at-dre.iap.cloud.huawei.eu";
 
     public static String getRootUrl(Integer accountFlag) {
         if (accountFlag != null && accountFlag == 1) {
@@ -57,7 +57,7 @@ public class OrderService {
         String msgBody = JSONObject.toJSONString(bodyMap);
 
         String response = AtDemo.httpPost(getRootUrl(accountFlag) + "/applications/purchases/tokens/verify",
-            "application/json; charset=UTF-8", msgBody, 5000, 5000, headers);
+            "application/json; charset=UTF-8", msgBody, 5000, 5000, headers, true);
         // TODO: display the response as string in console, you can replace it with your business logic.
         System.out.println(response);
     }
@@ -80,12 +80,12 @@ public class OrderService {
         String msgBody = JSONObject.toJSONString(bodyMap);
 
         String response = AtDemo.httpPost(getRootUrl(accountFlag) + "/applications/v2/purchases/cancelledList",
-            "application/json; charset=UTF-8", msgBody, 5000, 5000, headers);
+            "application/json; charset=UTF-8", msgBody, 5000, 5000, headers, true);
         // TODO: display the response as string in console, you can replace it with your business logic.
         System.out.println(response);
     }
 
-    public static void confirmPurchase(String purchaseToken, String productId,Integer accountFlag) throws Exception {
+    public static void confirmPurchase(String purchaseToken, String productId, Integer accountFlag) throws Exception {
         // fetch the App Level AccessToken
         String appAt = AtDemo.getAppAT();
         // construct the Authorization in Header
@@ -99,7 +99,7 @@ public class OrderService {
         String msgBody = JSONObject.toJSONString(bodyMap);
 
         String response = AtDemo.httpPost(getRootUrl(accountFlag) + "/applications/v2/purchases/confirm",
-                "application/json; charset=UTF-8", msgBody, 5000, 5000, headers);
+            "application/json; charset=UTF-8", msgBody, 5000, 5000, headers, true);
         // TODO: display the response as string in console, you can replace it with your business logic.
         System.out.println(response);
     }

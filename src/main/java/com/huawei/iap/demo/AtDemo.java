@@ -26,13 +26,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 
 /**
  * 功能描述
@@ -102,15 +107,30 @@ public class AtDemo {
      * @throws IOException the io exception
      */
     public static String httpPost(String httpUrl, String contentType, String data, int connectTimeout, int readTimeout,
-        Map<String, String> headers) throws IOException {
+        Map<String, String> headers, boolean enhancedSafety) throws IOException {
         OutputStream output = null;
         InputStream in = null;
-        HttpURLConnection urlConnection = null;
+        HttpsURLConnection urlConnection = null;
         BufferedReader bufferedReader = null;
         InputStreamReader inputStreamReader = null;
         try {
             URL url = new URL(httpUrl);
-            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection = (HttpsURLConnection) url.openConnection();
+            SSLContext sc = SSLContext.getInstance("TLSv1.2");
+            sc.init(null, null, new java.security.SecureRandom());
+            SSLSocketFactory sf = sc.getSocketFactory();
+
+            String[] protocolList = null;
+            String[] cipherList = null;
+            if (enhancedSafety) {
+                protocolList = new String[] {"TLSv1.2", "TLSv1.3"};
+                cipherList =
+                    new String[] {"TLS_AES_128_GCM_SHA256", "TLS_AES_256_GCM_SHA384", "TLS_CHACHA20_POLY1305_SHA256",
+                        "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256", "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+                        "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384", "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"};
+            }
+            urlConnection.setSSLSocketFactory(new EnhancedSSLSocketFactory(sf, protocolList, cipherList));
+
             urlConnection.setRequestMethod("POST");
             urlConnection.setDoOutput(true);
             urlConnection.setDoInput(true);
@@ -144,6 +164,10 @@ public class AtDemo {
                 strBuf.append(str);
             }
             return strBuf.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (KeyManagementException e) {
+            throw new RuntimeException(e);
         } finally {
             if (bufferedReader != null) {
                 bufferedReader.close();
