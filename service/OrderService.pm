@@ -25,9 +25,9 @@ use Data::Dumper;
 
 # TODO: replace the (ip:port) to the real one, and if the protocol is https, you should deal with the license
 # yourself
-my $toc_site_url = "http://ip:port";
+my $toc_site_url = "https://ip:port";
 # site for telecom carrier
-my $tobtoc_site_url = "https://orders-at-dre.iap.dbankcloud.com";
+my $tobtoc_site_url = "https://orders-at-dre.iap.cloud.huawei.eu";
 
 sub getRootUrl {
   print "getRootUrl\n";

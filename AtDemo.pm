@@ -20,6 +20,7 @@ package AtDemo;
 use strict;
 use warnings;
 use LWP::UserAgent;
+use LWP::Protocol::https;
 use HTTP::Request::Common;
 use MIME::Base64;
 use Data::Dumper;
@@ -43,7 +44,7 @@ sub getAppAT {
     my @headers = (
         "Content-Type" => "application/x-www-form-urlencoded; charset=UTF-8"
     );
-    my $res = httpPost($tokenUrl, $query_body, 5000, @headers);
+    my $res = httpPost($tokenUrl, $query_body, 5000, 0, @headers);
     if ($res->is_success) {
         my $body = $res->decoded_content;
         my $json = parse_json($body);
@@ -51,6 +52,7 @@ sub getAppAT {
         die "accessToken fetch failed" unless defined($authToken);
     } else {
         print 'error occurred';
+        print Dumper($res);
         $authToken = '';
         die "accessToken fetch failed";
     }
@@ -67,8 +69,19 @@ sub buildAuthorization {
 
 sub httpPost {
     print "httpPost\n";
-    my ($httpUrl, $data, $timeout, @headers) = @_;
+    my ($httpUrl, $data, $timeout, $enhancedSafety, @headers) = @_;
     my $ua = LWP::UserAgent->new(timeout => $timeout);
+    if ($enhancedSafety == 1) {
+        print "enhancedSafety\n";
+        $ua = LWP::UserAgent->new(
+            timeout => $timeout,
+            ssl_opts => {
+                SSL_version => 'TLSv1_2',
+                SSL_cipher_list => 'ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256',
+                SSL_ciphersuites => 'TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256'
+            }
+        );
+    }
     return $ua->request(POST $httpUrl, @headers, Content => $data);
 }
 
@@ -84,7 +97,7 @@ sub authPost {
     my @headers = ();
     push @headers, (Authorization => buildAuthorization($authToken));
     push @headers, %headers;
-    my $res = httpPost($httpUrl, $data, $timeout, @headers);
+    my $res = httpPost($httpUrl, $data, $timeout, 1, @headers);
     if ($res->is_success) {
         my $body = $res->decoded_content;
         my $json = parse_json($body);
@@ -93,6 +106,7 @@ sub authPost {
         print "token expired\n";
         $authToken = '';
         if (defined($retryTag)) {
+            print Dumper($res);
             die "request failed, you may want to dump the result";
         }
         print "refetch AT and try again\n";
