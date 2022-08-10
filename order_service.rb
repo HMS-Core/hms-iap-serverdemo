@@ -18,9 +18,9 @@ class OrderService
 
   # TODO: replace the (ip:port) to the real one. If the protocol is https,
   # TODO:you should deal with the license
-  TOC_SITE_URL = 'http://ip:port'
+  TOC_SITE_URL = 'https://ip:port'
 
-  TOBTOC_SITE_URL = 'https://orders-at-dre.iap.dbankcloud.com'
+  TOBTOC_SITE_URL = 'https://orders-at-dre.iap.cloud.huawei.eu'
 
   def getRootUrl(accountFlag)
     if (accountFlag != nil && accountFlag == 1)
@@ -36,7 +36,7 @@ class OrderService
     body = {'purchaseToken' => purchaseToken,
             'productId' => productId}
 
-    rsp=atDemo.httpPost(getRootUrl(accountFlag) + '/applications/purchases/tokens/verify', headers, body.to_json)
+    rsp=atDemo.apiHttpsPost(getRootUrl(accountFlag) + '/applications/purchases/tokens/verify', headers, body.to_json)
     puts rsp.body
   end
 
@@ -50,7 +50,7 @@ class OrderService
             'maxRows' => maxRows,
             'type' => type,
             'continuationToken' => continuationToken}
-    rsp= atDemo.httpPost(getRootUrl(accountFlag) + "/applications/v2/purchases/cancelledList",headers, body.to_json)
+    rsp= atDemo.apiHttpsPost(getRootUrl(accountFlag) + "/applications/v2/purchases/cancelledList",headers, body.to_json)
     puts rsp.body
   end
 
@@ -61,7 +61,7 @@ class OrderService
     body = {'purchaseToken' => purchaseToken,
             'productId' => productId,
            }
-    rsp= atDemo.httpPost(getRootUrl(accountFlag) + "/applications/v2/purchases/confirm",headers, body.to_json)
+    rsp= atDemo.apiHttpsPost(getRootUrl(accountFlag) + "/applications/v2/purchases/confirm",headers, body.to_json)
     puts rsp.body
   end
 end

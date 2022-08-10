@@ -18,9 +18,9 @@ class SubscriptionService
 
 # TODO: replace the (ip:port) to the real one. If the protocol is https,
 # TODO:you should deal with the license
-  TOC_SITE_URL = 'http://ip:port'
+  TOC_SITE_URL = 'https://ip:port'
 
-  TOBTOC_SITE_URL = 'https://subscr-at-dre.iap.dbankcloud.com'
+  TOBTOC_SITE_URL = 'https://subscr-at-dre.iap.cloud.huawei.eu'
 
   def getRootUrl(accountFlag)
     if (accountFlag != nil && accountFlag == 1)
@@ -36,7 +36,7 @@ class SubscriptionService
     body = {'subscriptionId' => subscriptionId,
             'purchaseToken' => purchaseToken}
 
-    rsp = atDemo.httpPost(getRootUrl(accountFlag)+ "/sub/applications/v2/purchases/get", headers, body.to_json)
+    rsp = atDemo.apiHttpsPost(getRootUrl(accountFlag)+ "/sub/applications/v2/purchases/get", headers, body.to_json)
     puts rsp.body
   end
 
@@ -47,7 +47,7 @@ class SubscriptionService
     body = {'subscriptionId' => subscriptionId,
             'purchaseToken' => purchaseToken}
 
-    rsp = atDemo.httpPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/stop", headers, body.to_json)
+    rsp = atDemo.apiHttpsPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/stop", headers, body.to_json)
     puts rsp.body
   end
 
@@ -61,7 +61,7 @@ class SubscriptionService
             'currentExpirationTime' => currentExpirationTime,
             'desiredExpirationTime' => desiredExpirationTime}
 
-    rsp = atDemo.httpPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/delay", headers, body.to_json)
+    rsp = atDemo.apiHttpsPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/delay", headers, body.to_json)
     puts rsp.body
   end
 
@@ -73,7 +73,7 @@ class SubscriptionService
             'purchaseToken' => purchaseToken
     }
 
-    rsp = atDemo.httpPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/returnFee", headers, body.to_json)
+    rsp = atDemo.apiHttpsPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/returnFee", headers, body.to_json)
     puts rsp.body
   end
 
@@ -86,7 +86,7 @@ class SubscriptionService
             'purchaseToken' => purchaseToken
     }
 
-    rsp = atDemo.httpPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/withdrawal", headers, body.to_json)
+    rsp = atDemo.apiHttpsPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/withdrawal", headers, body.to_json)
     puts rsp.body
   end
 

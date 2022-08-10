@@ -13,10 +13,10 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
     See the License for the specific language governing permissions and
     limitations under the License.
 =end
-require 'URI'
+require 'uri'
 require 'net/https'
 require 'json'
-require 'Base64'
+require 'base64'
 class AtDemo
 
   # TODO: The values of (clientId, clientSecret, TokenUrl) should be replaced with the actual one.
@@ -39,7 +39,7 @@ class AtDemo
     return JSON.parse(response.body)['access_token']
   end
 
-  # Http post function
+  # Https post function
   def httpsPost(httpUrl, headers, data)
     url = URI(httpUrl)
     http = Net::HTTP.new(url.host, url.port)
@@ -49,9 +49,13 @@ class AtDemo
   end
 
   # Https post function
-  def httpPost(httpUrl, headers, data)
+  def apiHttpsPost(httpUrl, headers, data)
     url = URI(httpUrl)
     http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+    http.min_version = OpenSSL::SSL::TLS1_2_VERSION
+    http.ciphers = "TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256"
     return http.post(url, data, headers)
   end
 
