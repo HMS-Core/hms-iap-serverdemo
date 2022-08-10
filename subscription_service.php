@@ -20,9 +20,9 @@ require "at_demo.php";
 class SubscriptionService {
     // TODO: replace the (ip:port) to the real one, and if the protocol is https, you should deal with the license yourself.
     //yourself
-    const TOC_SITE_URL = "http://ip:port";
+    const TOC_SITE_URL = "https://ip:port";
     //site fore telecom carrier
-    const TOBTOC_SITE_URL = "https://subscr-at-dre.iap.dbankcloud.com";
+    const TOBTOC_SITE_URL = "https://subscr-at-dre.iap.cloud.huawei.eu";
 
     const GET_SUBSCRIPTION_URL = "/sub/applications/v2/purchases/get";
     const STOP_SUBSCRIPTION_URL = "/sub/applications/v2/purchases/stop";
@@ -50,7 +50,7 @@ class SubscriptionService {
         $body = ["subscriptionId" => $subscriptionId, "purchaseToken" => $purchaseToken];
         $msgBody = json_encode($body);
 
-        $response = AtDemo::httpPost(self::getRootUrl($accountFlag).self::GET_SUBSCRIPTION_URL, $msgBody, 5, 5, $headers);
+        $response = AtDemo::httpPost(self::getRootUrl($accountFlag).self::GET_SUBSCRIPTION_URL, $msgBody, 5, 5, $headers, true);
 
         // TODO: display the response as string in console, you can replace it with your business logic.
         echo $response;
@@ -69,7 +69,7 @@ class SubscriptionService {
         $body = ["subscriptionId" => $subscriptionId, "purchaseToken" => $purchaseToken];
         $msgBody = json_encode($body);
 
-        $response = AtDemo::httpPost(self::getRootUrl($accountFlag).self::STOP_SUBSCRIPTION_URL, $msgBody, 5, 5, $headers);
+        $response = AtDemo::httpPost(self::getRootUrl($accountFlag).self::STOP_SUBSCRIPTION_URL, $msgBody, 5, 5, $headers, true);
 
         // TODO: display the response as string in console, you can replace it with your business logic.
         echo $response;
@@ -88,7 +88,7 @@ class SubscriptionService {
         $body = ["subscriptionId" => $subscriptionId, "purchaseToken" => $purchaseToken, "currentExpirationTime" => $currentExpirationTime, "desiredExpirationTime" => $desiredExpirationTime];
         $msgBody = json_encode($body);
 
-        $response = AtDemo::httpPost(self::getRootUrl($accountFlag).self::DELAY_SUBSCRIPTION_URL, $msgBody, 5, 5, $headers);
+        $response = AtDemo::httpPost(self::getRootUrl($accountFlag).self::DELAY_SUBSCRIPTION_URL, $msgBody, 5, 5, $headers, true);
 
         // TODO: display the response as string in console, you can replace it with your business logic.
         echo $response;
@@ -107,7 +107,7 @@ class SubscriptionService {
         $body = ["subscriptionId" => $subscriptionId, "purchaseToken" => $purchaseToken];
         $msgBody = json_encode($body);
 
-        $response = AtDemo::httpPost(self::getRootUrl($accountFlag).self::RETURN_FEE_SUBSCRIPTION_URL, $msgBody, 5, 5, $headers);
+        $response = AtDemo::httpPost(self::getRootUrl($accountFlag).self::RETURN_FEE_SUBSCRIPTION_URL, $msgBody, 5, 5, $headers, true);
 
         // TODO: display the response as string in console, you can replace it with your business logic.
         echo $response;
@@ -126,7 +126,7 @@ class SubscriptionService {
         $body = ["subscriptionId" => $subscriptionId, "purchaseToken" => $purchaseToken];
         $msgBody = json_encode($body);
 
-        $response = AtDemo::httpPost(self::getRootUrl($accountFlag).self::WITHDRAWAL_SUBSCRIPTION_URL, $msgBody, 5, 5, $headers);
+        $response = AtDemo::httpPost(self::getRootUrl($accountFlag).self::WITHDRAWAL_SUBSCRIPTION_URL, $msgBody, 5, 5, $headers, true);
 
         // TODO: display the response as string in console, you can replace it with your business logic.
         echo $response;

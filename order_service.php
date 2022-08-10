@@ -20,9 +20,9 @@ require "at_demo.php";
 class OrderService {
     // TODO: replace the (ip:port) to the real one, and if the protocol is https, you should deal with the license yourself.
     //yourself
-    const TOC_SITE_URL = "http://ip:port";
+    const TOC_SITE_URL = "https://ip:port";
     //site fore telecom carrier
-    const TOBTOC_SITE_URL = "https://subscr-at-dre.iap.dbankcloud.com";
+    const TOBTOC_SITE_URL = "https://orders-at-dre.iap.cloud.huawei.eu";
 
     const VERIFY_TOKEN_URL = "/applications/purchases/tokens/verify";
     const CANCELLED_LIST_PURCHASE_URL = "/applications/v2/purchases/cancelledList";
@@ -48,7 +48,7 @@ class OrderService {
         $body = ["purchaseToken" => $purchaseToken, "productId" => $productId];
         $msgBody = json_encode($body);
 
-         $response = AtDemo::httpPost(self::getRootUrl($accountFlag).self::VERIFY_TOKEN_URL, $msgBody, 5, 5, $headers);
+         $response = AtDemo::httpPost(self::getRootUrl($accountFlag).self::VERIFY_TOKEN_URL, $msgBody, 5, 5, $headers, true);
 
         // TODO: display the response as string in console, you can replace it with your business logic.
         echo $response;
@@ -67,7 +67,7 @@ class OrderService {
         $body = ["endAt" => $endTime, "startAt" => $startTime, "maxRows" => $maxRows, "type" => $type, "continuationToken" => $continuationToken];
         $msgBody = json_encode($body);
 
-         $response = AtDemo::httpPost(self::getRootUrl($accountFlag).self::CANCELLED_LIST_PURCHASE_URL, $msgBody, 5, 5, $headers);
+         $response = AtDemo::httpPost(self::getRootUrl($accountFlag).self::CANCELLED_LIST_PURCHASE_URL, $msgBody, 5, 5, $headers, true);
 
         // TODO: display the response as string in console, you can replace it with your business logic.
         echo $response;
@@ -86,7 +86,7 @@ class OrderService {
         $body = ["purchaseToken"=>$purchaseToken,"productId"=>$productId];
         $msgBody = json_encode($body);
 
-        $response = AtDemo::httpPost(self::getRootUrl($accountFlag).self::CONFIRM_PURCHASE_URL, $msgBody, 5, 5, $headers);
+        $response = AtDemo::httpPost(self::getRootUrl($accountFlag).self::CONFIRM_PURCHASE_URL, $msgBody, 5, 5, $headers, true);
 
         // TODO: display the response as string in console, you can replace it with your business logic.
         echo $response;

@@ -35,7 +35,7 @@ class AtDemo {
         $data=http_build_query($dataArray, '', '&');
         $header = array("Content-Type: application/x-www-form-urlencoded; charset=UTF-8");
         try{
-            $ret = self::doPost(AtDemo::TOKEN_URL, $data,  5,5,$header);
+            $ret = self::doPost(AtDemo::TOKEN_URL, $data, 5, 5, $header, false);
             $result = $ret[0];
             $status_code = $ret[1];
             if($status_code != '200'){
@@ -60,10 +60,11 @@ class AtDemo {
      * @param $connectTimeout int the connect timeout
      * @param $readTimeout int the read timeout
      * @param $headers array the headers
+     * @param $enhancedSafety boolean whether enhance the safety of cipher suites
      * @return string the result
      */
-    public static function  httpPost($httpUrl, $data, $connectTimeout, $readTimeout,$headers) {
-        $ret = self::doPost($httpUrl, $data, $connectTimeout, $readTimeout,$headers);
+    public static function  httpPost($httpUrl, $data, $connectTimeout, $readTimeout, $headers, $enhancedSafety) {
+        $ret = self::doPost($httpUrl, $data, $connectTimeout, $readTimeout,$headers, $enhancedSafety);
         $result = $ret[0];
         $status_code = $ret[1];
         //when statusCode is 401, means AT is expired
@@ -72,7 +73,7 @@ class AtDemo {
             self::$accessToken = '';
             $appAt =self::getAppAT();
             $headers = self::buildAuthorization($appAt);
-            $ret = self::doPost($httpUrl, $data, $connectTimeout, $readTimeout,$headers);
+            $ret = self::doPost($httpUrl, $data, $connectTimeout, $readTimeout,$headers, $enhancedSafety);
             $result = $ret[0];
         }
         return $result;
@@ -86,9 +87,10 @@ class AtDemo {
      * @param $connectTimeout int the connect timeout
      * @param $readTimeout int the read timeout
      * @param $headers array the headers
+     * @param $enhancedSafety boolean whether enhance the safety of cipher suites
      * @return array the result and status code
      */
-    private static function doPost($httpUrl, $data, $connectTimeout, $readTimeout,$headers) {
+    private static function doPost($httpUrl, $data, $connectTimeout, $readTimeout,$headers, $enhancedSafety) {
         $options = array(
             CURLOPT_POST => 1,
             CURLOPT_URL => $httpUrl,
@@ -97,10 +99,14 @@ class AtDemo {
             CURLOPT_CONNECTTIMEOUT => $connectTimeout,
             CURLOPT_TIMEOUT => $readTimeout,
             CURLOPT_POSTFIELDS => $data,
-            CURLOPT_SSL_VERIFYPEER => 0 //disable HTTPS protocol to verify SSL security certificate
+            CURLOPT_SSL_VERIFYPEER => 1 //enable HTTPS protocol to verify SSL security certificate
         );
         $ch = curl_init();
         curl_setopt_array($ch, $options);
+        if ($enhancedSafety) {
+            curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
+            curl_setopt($ch, CURLOPT_SSL_CIPHER_LIST, 'TLS_AES_128_GCM_SHA256,TLS_AES_256_GCM_SHA384,TLS_CHACHA20_POLY1305_SHA256,ECDHE-RSA-AES256-GCM-SHA384,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-ECDSA-AES128-GCM-SHA256');
+        }
         $result = curl_exec($ch);
         $status_code = curl_getinfo($ch,CURLINFO_HTTP_CODE);
         if (curl_error($ch)) {
