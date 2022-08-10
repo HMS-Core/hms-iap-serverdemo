@@ -18,6 +18,7 @@ import json
 import urllib.request
 import urllib.parse
 import base64
+import ssl
 
 """The Demo Class For AccessToken request."""
 # TODO: The values of (clientId, clientSecret, TokenUrl) should be replaced with the actual one.
@@ -40,7 +41,7 @@ def getAppAT():
     headers = {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
     bodyDict = {"grant_type": "client_credentials", "client_secret": clientSecret, "client_id": clientId}
     data = urllib.parse.urlencode(bodyDict).encode("utf-8")
-    response = httpPost(TokenUrl, data, headers)
+    response = httpPost(TokenUrl, data, headers, 0)
     if response is not None and response != "":
         jsonObject = json.loads(response)
         accessToken = jsonObject['access_token']
@@ -49,10 +50,10 @@ def getAppAT():
     return accessToken
 
 
-def httpPost(url, params, headers):
+def httpPost(url, params, headers, enhancedSafety = 1):
     """Http post function."""
     global accessToken
-    response, statusCode = doPost(url, params, headers)
+    response, statusCode = doPost(url, params, headers, enhancedSafety)
     # when statusCode is 401, means AT is expired
     if statusCode == 401:
         # refresh AT
@@ -60,18 +61,26 @@ def httpPost(url, params, headers):
         appAt = getAppAT()
         headers = buildAuthorization(appAt)
         # request again
-        response, statusCode = doPost(url, params, headers)
+        response, statusCode = doPost(url, params, headers, enhancedSafety)
     elif statusCode != 200:
         print("request error: " + response)
         response = None
     return response
 
 
-def doPost(url, params, headers):
+def doPost(url, params, headers, enhancedSafety = 1):
     """do post request"""
     try:
         errorPro = BetterHTTPErrorProcessor()
-        opener = urllib.request.build_opener(errorPro)
+        opener = ""
+        if enhancedSafety == 1: 
+            scontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+            scontext.set_ciphers("TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256")
+            httpshandler = urllib.request.HTTPSHandler(context=scontext)
+            opener = urllib.request.build_opener(errorPro, httpshandler)
+        else:
+            opener = urllib.request.build_opener(errorPro)
+
         # urllib.request.install_opener(opener)
         req = urllib.request.Request(url=url, data=params, headers=headers, unverifiable=False, method="POST")
         # response = urllib.request.urlopen(req, timeout=50)
