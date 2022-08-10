@@ -87,7 +87,11 @@ var requestOption = {
  * @param callback  the callback of response
  */
 const httpPost = function (option, callback) {
-    request.post(option, function (error, response, body) {
+    request.post({
+        ...option,
+        ciphers: 'TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256',
+        minVersion: 'TLSv1.2',
+    }, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             callback(error, body);
         }
