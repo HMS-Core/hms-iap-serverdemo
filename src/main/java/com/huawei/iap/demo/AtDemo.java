@@ -71,7 +71,7 @@ public class AtDemo {
         String msgBody = MessageFormat.format("grant_type={0}&client_secret={1}&client_id={2}", grantType,
             URLEncoder.encode(CLIENT_SECRET, "UTF-8"), CLIENT_ID);
         String response =
-            httpPost(TOKEN_URL, "application/x-www-form-urlencoded; charset=UTF-8", msgBody, 5000, 5000, null);
+            httpPost(TOKEN_URL, "application/x-www-form-urlencoded; charset=UTF-8", msgBody, 5000, 5000, null, false);
         JSONObject obj = JSONObject.parseObject(response);
         accessToken = obj.getString("access_token");
 
