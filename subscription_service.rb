@@ -20,39 +20,30 @@ class SubscriptionService
 # TODO:you should deal with the license
   TOC_SITE_URL = 'https://ip:port'
 
-  TOBTOC_SITE_URL = 'https://subscr-at-dre.iap.cloud.huawei.eu'
-
-  def getRootUrl(accountFlag)
-    if (accountFlag != nil && accountFlag == 1)
-      return TOBTOC_SITE_URL;
-    end
-      return TOC_SITE_URL;
-  end
-
-  def getSubscription(subscriptionId, purchaseToken,accountFlag)
+  def getSubscription(subscriptionId, purchaseToken)
     atDemo = AtDemo.new
     headers = atDemo.buildAuthorization(atDemo.getAppAt)
 
     body = {'subscriptionId' => subscriptionId,
             'purchaseToken' => purchaseToken}
 
-    rsp = atDemo.apiHttpsPost(getRootUrl(accountFlag)+ "/sub/applications/v2/purchases/get", headers, body.to_json)
+    rsp = atDemo.apiHttpsPost(TOC_SITE_URL + "/sub/applications/v2/purchases/get", headers, body.to_json)
     puts rsp.body
   end
 
-  def stopSubscription(subscriptionId, purchaseToken,accountFlag)
+  def stopSubscription(subscriptionId, purchaseToken)
     atDemo = AtDemo.new
     headers = atDemo.buildAuthorization(atDemo.getAppAt)
 
     body = {'subscriptionId' => subscriptionId,
             'purchaseToken' => purchaseToken}
 
-    rsp = atDemo.apiHttpsPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/stop", headers, body.to_json)
+    rsp = atDemo.apiHttpsPost(TOC_SITE_URL + "/sub/applications/v2/purchases/stop", headers, body.to_json)
     puts rsp.body
   end
 
   def delaySubscription(subscriptionId, purchaseToken, currentExpirationTime,
-                        desiredExpirationTime,accountFlag)
+                        desiredExpirationTime)
     atDemo = AtDemo.new
     headers = atDemo.buildAuthorization(atDemo.getAppAt)
 
@@ -61,11 +52,11 @@ class SubscriptionService
             'currentExpirationTime' => currentExpirationTime,
             'desiredExpirationTime' => desiredExpirationTime}
 
-    rsp = atDemo.apiHttpsPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/delay", headers, body.to_json)
+    rsp = atDemo.apiHttpsPost(TOC_SITE_URL + "/sub/applications/v2/purchases/delay", headers, body.to_json)
     puts rsp.body
   end
 
-  def returnFeeSubscription(subscriptionId, purchaseToken,accountFlag)
+  def returnFeeSubscription(subscriptionId, purchaseToken)
     atDemo = AtDemo.new
     headers = atDemo.buildAuthorization(atDemo.getAppAt)
 
@@ -73,12 +64,12 @@ class SubscriptionService
             'purchaseToken' => purchaseToken
     }
 
-    rsp = atDemo.apiHttpsPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/returnFee", headers, body.to_json)
+    rsp = atDemo.apiHttpsPost(TOC_SITE_URL + "/sub/applications/v2/purchases/returnFee", headers, body.to_json)
     puts rsp.body
   end
 
 
-  def withdrawSubscription(subscriptionId, purchaseToken,accountFlag)
+  def withdrawSubscription(subscriptionId, purchaseToken)
     atDemo = AtDemo.new
     headers = atDemo.buildAuthorization(atDemo.getAppAt)
 
@@ -86,7 +77,7 @@ class SubscriptionService
             'purchaseToken' => purchaseToken
     }
 
-    rsp = atDemo.apiHttpsPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/withdrawal", headers, body.to_json)
+    rsp = atDemo.apiHttpsPost(TOC_SITE_URL + "/sub/applications/v2/purchases/withdrawal", headers, body.to_json)
     puts rsp.body
   end
 
