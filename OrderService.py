@@ -25,17 +25,11 @@ class OrderService:
     def __init__(self):
         # TODO: replace the (ip:port) to the real one, and if the protocol is https, you should deal with the license
         self.TOC_SITE_URL = "http://ip:port"
-        self.TOBTOC_SITE_URL = "http://ip:port"
         self.verifyTokenUrl = "%s/applications/purchases/tokens/verify"
         self.cancelledListPurchaseUrl = "%s/applications/v2/purchases/cancelledList"
         self.confirmPurchaseUrl = "%s/applications/v2/purchases/confirm"
 
-    def getRootUrl(self, accountFlag):
-        if accountFlag is not None and accountFlag == 1:
-            return self.TOBTOC_SITE_URL
-        return self.TOC_SITE_URL
-
-    def verifyToken(self, purchaseToken, productId, accountFlag):
+    def verifyToken(self, purchaseToken, productId):
         # fetch the App Level AccessToken
         appAt = AtDemo.getAppAT()
         if appAt is None or appAt == "":
@@ -45,11 +39,11 @@ class OrderService:
         # pack the request body
         bodyDict = {"purchaseToken": purchaseToken, "productId": productId}
         data = json.dumps(bodyDict)
-        response = AtDemo.httpPost(self.verifyTokenUrl % self.getRootUrl(accountFlag), str.encode(data), headers)
+        response = AtDemo.httpPost(self.verifyTokenUrl % self.TOC_SITE_URL, str.encode(data), headers)
         # TODO: display the response as string in console, you can replace it with your business logic.
         print(response)
 
-    def cancelledListPurchase(self, endAt, startAt, maxRows, queryType, continuationToken, accountFlag):
+    def cancelledListPurchase(self, endAt, startAt, maxRows, queryType, continuationToken):
         # fetch the App Level AccessToken
         appAt = AtDemo.getAppAT()
         if appAt is None or appAt == "":
@@ -60,11 +54,11 @@ class OrderService:
         bodyDict = {"endAt": endAt, "startAt": startAt, "maxRows": maxRows, "type": queryType,
                     "continuationToken": continuationToken}
         data = json.dumps(bodyDict)
-        response = AtDemo.httpPost(self.cancelledListPurchaseUrl % self.getRootUrl(accountFlag), str.encode(data), headers)
+        response = AtDemo.httpPost(self.cancelledListPurchaseUrl % self.TOC_SITE_URL, str.encode(data), headers)
         # TODO: display the response as string in console, you can replace it with your business logic.
         print(response)
 
-    def confirmPurchase(self, purchaseToken, productId, accountFlag):
+    def confirmPurchase(self, purchaseToken, productId):
         # fetch the App Level AccessToken
         appAt = AtDemo.getAppAT()
         if appAt is None or appAt == "":
@@ -74,6 +68,6 @@ class OrderService:
         # pack the request body
         bodyDict = {"purchaseToken": purchaseToken, "productId": productId}
         data = json.dumps(bodyDict)
-        response = AtDemo.httpPost(self.confirmPurchaseUrl % self.getRootUrl(accountFlag), str.encode(data), headers)
+        response = AtDemo.httpPost(self.confirmPurchaseUrl % self.TOC_SITE_URL, str.encode(data), headers)
         # TODO: display the response as string in console, you can replace it with your business logic.
         print(response)
