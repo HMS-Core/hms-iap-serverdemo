@@ -20,28 +20,19 @@ class OrderService
   # TODO:you should deal with the license
   TOC_SITE_URL = 'https://ip:port'
 
-  TOBTOC_SITE_URL = 'https://orders-at-dre.iap.cloud.huawei.eu'
-
-  def getRootUrl(accountFlag)
-    if (accountFlag != nil && accountFlag == 1)
-        return TOBTOC_SITE_URL;
-    end
-    return TOC_SITE_URL;
-  end
-
-  def verifyToken(purchaseToken, productId,accountFlag)
+  def verifyToken(purchaseToken, productId)
     atDemo = AtDemo.new
     headers = atDemo.buildAuthorization(atDemo.getAppAt)
 
     body = {'purchaseToken' => purchaseToken,
             'productId' => productId}
 
-    rsp=atDemo.apiHttpsPost(getRootUrl(accountFlag) + '/applications/purchases/tokens/verify', headers, body.to_json)
+    rsp=atDemo.apiHttpsPost(TOC_SITE_URL + '/applications/purchases/tokens/verify', headers, body.to_json)
     puts rsp.body
   end
 
   def cancelledListPurchase(endAt, startAt, maxRows, type,
-                            continuationToken,accountFlag)
+                            continuationToken)
     atDemo = AtDemo.new
     headers = atDemo.buildAuthorization(atDemo.getAppAt)
 
@@ -50,18 +41,18 @@ class OrderService
             'maxRows' => maxRows,
             'type' => type,
             'continuationToken' => continuationToken}
-    rsp= atDemo.apiHttpsPost(getRootUrl(accountFlag) + "/applications/v2/purchases/cancelledList",headers, body.to_json)
+    rsp= atDemo.apiHttpsPost(TOC_SITE_URL + "/applications/v2/purchases/cancelledList",headers, body.to_json)
     puts rsp.body
   end
 
-  def confirmPurchase(accountFlag,purchaseToken,productId)
+  def confirmPurchase(purchaseToken,productId)
     atDemo = AtDemo.new
     headers = atDemo.buildAuthorization(atDemo.getAppAt)
 
     body = {'purchaseToken' => purchaseToken,
             'productId' => productId,
            }
-    rsp= atDemo.apiHttpsPost(getRootUrl(accountFlag) + "/applications/v2/purchases/confirm",headers, body.to_json)
+    rsp= atDemo.apiHttpsPost(TOC_SITE_URL + "/applications/v2/purchases/confirm",headers, body.to_json)
     puts rsp.body
   end
 end
