@@ -182,28 +182,25 @@ namespace IapDemo
 
     public class OrderDemo
     {
-        public static String getRootUrl(int accountFlag) {
-                if (accountFlag == 1) {
-                   // site for telecom carrier
-                    return "https://orders-at-dre.iap.cloud.huawei.eu";
-                }
-                // TODO: replace the (ip:port) to the real one,
-                return "https://ip:port";
-            }
-        public static void verifyToken(String purchaseToken, String productId,int accountFlag)
+        public static String getRootUrl() {
+            // TODO: replace the (ip:port) to the real one,
+            return "https://ip:port";
+        }
+
+        public static void verifyToken(String purchaseToken, String productId)
         {
             var requestHeaders = AtDemo.buildAuthorization();
             Dictionary<string, string> bodyMap = new Dictionary<string, string>();
             bodyMap.Add("purchaseToken", purchaseToken);
             bodyMap.Add("productId", productId);
             var bodyString = JsonSerializer.Serialize(bodyMap);
-            String responseString = AtDemo.httpPost(getRootUrl(accountFlag) + "/applications/purchases/tokens/verify", "application/json", bodyString, 5, requestHeaders, 1);
+            String responseString = AtDemo.httpPost(getRootUrl() + "/applications/purchases/tokens/verify", "application/json", bodyString, 5, requestHeaders, 1);
 
             // TODO: display the response as string in console, you can replace it with your business logic.
             Console.WriteLine(responseString);
         }
 
-        public static void cancelledListPurchase(long endAt, long startAt, int maxRows, int type, string continuationToken,int accountFlag)
+        public static void cancelledListPurchase(long endAt, long startAt, int maxRows, int type, string continuationToken)
         {
             var requestHeaders = AtDemo.buildAuthorization();
 
@@ -216,13 +213,13 @@ namespace IapDemo
             bodyMap.Add("continuationToken", continuationToken.ToString());
             var bodyString = JsonSerializer.Serialize(bodyMap);
 
-            String responseString = AtDemo.httpPost(getRootUrl(accountFlag) + "/applications/v2/purchases/cancelledList", "application/json", bodyString, 5, requestHeaders, 1);
+            String responseString = AtDemo.httpPost(getRootUrl() + "/applications/v2/purchases/cancelledList", "application/json", bodyString, 5, requestHeaders, 1);
 
             // TODO: display the response as string in console, you can replace it with your business logic.
             Console.WriteLine(responseString);
         }
 
-        public static void confirmPurchase(String purchaseToken, String productId,int accountFlag)
+        public static void confirmPurchase(String purchaseToken, String productId)
         {
             var requestHeaders = AtDemo.buildAuthorization();
 
@@ -233,7 +230,7 @@ namespace IapDemo
 
             var bodyString = JsonSerializer.Serialize(bodyMap);
 
-            String responseString = AtDemo.httpPost(getRootUrl(accountFlag) + "/applications/v2/purchases/confirm", "application/json", bodyString, 5, requestHeaders, 1);
+            String responseString = AtDemo.httpPost(getRootUrl() + "/applications/v2/purchases/confirm", "application/json", bodyString, 5, requestHeaders, 1);
 
             // TODO: display the response as string in console, you can replace it with your business logic.
             Console.WriteLine(responseString);
@@ -243,15 +240,11 @@ namespace IapDemo
     public class SubscriptionDemo
     {
 
-        public static String getRootUrl(int accountFlag) {
-            if ( accountFlag == 1) {
-               // site for telecom carrier
-                return "https://subscr-at-dre.iap.cloud.huawei.eu";
-            }
+        public static String getRootUrl() {
             // TODO: replace the (ip:port) to the real one,
             return "https://ip:port";
         }
-        public static void getSubscription(string subscriptionId, string purchaseToken,int accountFlag)
+        public static void getSubscription(string subscriptionId, string purchaseToken)
         {
             var headers = AtDemo.buildAuthorization();
 
@@ -263,14 +256,14 @@ namespace IapDemo
             var bodyString = JsonSerializer.Serialize(bodyMap);
             var config = DemoConfig.getDefaultConfig();
 
-            String responseString = AtDemo.httpPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/get",
+            String responseString = AtDemo.httpPost(getRootUrl() + "/sub/applications/v2/purchases/get",
             "application/json", bodyString, 5, headers, 1);
 
             // TODO: display the response as string in console, you can replace it with your business logic.
             Console.WriteLine(responseString);
         }
 
-        public static void stopSubscription(string subscriptionId, string purchaseToken,int accountFlag)
+        public static void stopSubscription(string subscriptionId, string purchaseToken)
         {
             var headers = AtDemo.buildAuthorization();
 
@@ -281,7 +274,7 @@ namespace IapDemo
 
             var bodyString = JsonSerializer.Serialize(bodyMap);
 
-            String responseString = AtDemo.httpPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/stop",
+            String responseString = AtDemo.httpPost(getRootUrl() + "/sub/applications/v2/purchases/stop",
                 "application/json", bodyString, 5, headers, 1);
 
             // TODO: display the response as string in console, you can replace it with your business logic.
@@ -289,7 +282,7 @@ namespace IapDemo
         }
 
         public static void delaySubscription(string subscriptionId, string purchaseToken, long currentExpirationTime,
-            long desiredExpirationTime,int accountFlag)
+            long desiredExpirationTime)
         {
             var headers = AtDemo.buildAuthorization();
 
@@ -301,14 +294,14 @@ namespace IapDemo
             bodyMap.Add("desiredExpirationTime", desiredExpirationTime + "");
             var bodyString = JsonSerializer.Serialize(bodyMap);
 
-            String responseString = AtDemo.httpPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/delay",
+            String responseString = AtDemo.httpPost(getRootUrl() + "/sub/applications/v2/purchases/delay",
             "application/json", bodyString, 5, headers, 1);
 
             // TODO: display the response as string in console, you can replace it with your business logic.
             Console.WriteLine(responseString);
         }
 
-        public static void returnFeeSubscription(string subscriptionId, string purchaseToken,int accountFlag)
+        public static void returnFeeSubscription(string subscriptionId, string purchaseToken)
         {
             var headers = AtDemo.buildAuthorization();
 
@@ -319,14 +312,14 @@ namespace IapDemo
 
             var bodyString = JsonSerializer.Serialize(bodyMap);
 
-            String responseString = AtDemo.httpPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/returnFee",
+            String responseString = AtDemo.httpPost(getRootUrl() + "/sub/applications/v2/purchases/returnFee",
             "application/json", bodyString, 5, headers, 1);
 
             // TODO: display the response as string in console, you can replace it with your business logic.
             Console.WriteLine(responseString);
         }
 
-        public static void withdrawalSubscription(string subscriptionId, string purchaseToken,int accountFlag)
+        public static void withdrawalSubscription(string subscriptionId, string purchaseToken)
         {
             var headers = AtDemo.buildAuthorization();
 
@@ -337,7 +330,7 @@ namespace IapDemo
 
             var bodyString = JsonSerializer.Serialize(bodyMap);
 
-            String responseString = AtDemo.httpPost(getRootUrl(accountFlag) + "/sub/applications/v2/purchases/withdrawal",
+            String responseString = AtDemo.httpPost(getRootUrl() + "/sub/applications/v2/purchases/withdrawal",
                 "application/json", bodyString, 5, headers, 1);
 
             // TODO: display the response as string in console, you can replace it with your business logic.
