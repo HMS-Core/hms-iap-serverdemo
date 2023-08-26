@@ -26,15 +26,9 @@ use Data::Dumper;
 # TODO: replace the (ip:port) to the real one, and if the protocol is https, you should deal with the license
 # yourself
 my $toc_site_url = "https://ip:port";
-# site for telecom carrier
-my $tobtoc_site_url = "https://orders-at-dre.iap.cloud.huawei.eu";
 
 sub getRootUrl {
   print "getRootUrl\n";
-  my $accountFlag = $_[0];
-  if (defined($accountFlag) && $accountFlag == 1) {
-    return $tobtoc_site_url;
-  }
   return $toc_site_url;
 }
 
@@ -42,8 +36,7 @@ sub verifyToken {
   print "verifyToken\n";
   my $purchaseToken = $_[0];
   my $productId = $_[1];
-  my $accountFlag = $_[2];
-  my $root_url = getRootUrl($accountFlag);
+  my $root_url = getRootUrl();
   my $res = AtDemo::authPost("$root_url/applications/purchases/tokens/verify", [
     purchaseToken => $purchaseToken,
     productId => $productId
@@ -60,8 +53,7 @@ sub cancelledListPurchase {
   my $maxRows = $_[2];
   my $type = $_[3];
   my $continuationToken = $_[4];
-  my $accountFlag = $_[5];
-  my $root_url = getRootUrl($accountFlag);
+  my $root_url = getRootUrl();
   my $res = AtDemo::authPost("$root_url/applications/v2/purchases/cancelledList", [
     endAt => $endAt,
     startAt => $startAt,
@@ -78,8 +70,7 @@ sub confirmPurchase {
   print "verifyToken\n";
   my $purchaseToken = $_[0];
   my $productId = $_[1];
-  my $accountFlag = $_[2];
-  my $root_url = getRootUrl($accountFlag);
+  my $root_url = getRootUrl();
   my $res = AtDemo::authPost("$root_url/applications/v2/purchases/confirm", [
     purchaseToken => $purchaseToken,
     productId => $productId
