@@ -19,7 +19,6 @@ const AtDemo = require('./AtDemo');
 
 // TODO: replace the (ip:port) to the real one, and if the protocol is https, you should deal with the license yourself.
 const TOC_SITE_URL = 'http://ip:port';
-const TOBTOC_SITE_URL = 'http://ip:port';
 
 // the request url
 const tokenVerifyUrl = '/applications/purchases/tokens/verify';
@@ -28,18 +27,6 @@ const tokenVerifyRequest = {
     purchaseToken: '1111111111.1.11111',
     productId: '11111',
 };
-
-/*
- * get the root url
- *
- * @param accountFlag  the accountFlag
- */
-var getRootUrl = function (accountFlag) {
-    if (accountFlag && accountFlag == 1) {
-        return TOBTOC_SITE_URL;
-    }
-    return TOC_SITE_URL;
-}
 
 /*
  * the callback of verifyToken
@@ -58,8 +45,8 @@ var verifyTokenCallback = function (errorMsg, response) {
 };
 
 // execute the tokenVerifyRequest
-var verifyToken = function (accountFlag) {
-    AtDemo.getAppAtAndExecuteRequest(getRootUrl(accountFlag) + tokenVerifyUrl, tokenVerifyRequest, verifyTokenCallback);
+var verifyToken = function () {
+    AtDemo.getAppAtAndExecuteRequest(TOC_SITE_URL + tokenVerifyUrl, tokenVerifyRequest, verifyTokenCallback);
 };
 
 
@@ -91,8 +78,8 @@ var cancelledListPurchaseCallback = function (errorMsg, response) {
 };
 
 // execute the cancelledPurchaseRequest
-var cancelledListPurchase = function (accountFlag) {
-    AtDemo.getAppAtAndExecuteRequest(getRootUrl(accountFlag) + cancelledPurchaseUrl, cancelledPurchaseRequest, cancelledListPurchaseCallback);
+var cancelledListPurchase = function () {
+    AtDemo.getAppAtAndExecuteRequest(TOC_SITE_URL + cancelledPurchaseUrl, cancelledPurchaseRequest, cancelledListPurchaseCallback);
 };
 
 // the request url
@@ -119,8 +106,8 @@ var confirmPurchaseCallback = function (errorMsg, response) {
 };
 
 // execute the confirmPurchase
-var confirmPurchase = function (accountFlag) {
-    AtDemo.getAppAtAndExecuteRequest(getRootUrl(accountFlag) + confirmPurchaseUrl, confirmPurchaseRequest, confirmPurchaseCallback);
+var confirmPurchase = function () {
+    AtDemo.getAppAtAndExecuteRequest(TOC_SITE_URL + confirmPurchaseUrl, confirmPurchaseRequest, confirmPurchaseCallback);
 };
 
 verifyToken(0);
