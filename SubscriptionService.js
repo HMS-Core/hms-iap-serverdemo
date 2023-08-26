@@ -19,7 +19,6 @@ const AtDemo = require('./AtDemo');
 
 // TODO: replace the (ip:port) to the real one, and if the protocol is https, you should deal with the license yourself.
 const TOC_SITE_URL = 'http://ip:port';
-const TOBTOC_SITE_URL = 'http://ip:port';
 
 // the request url
 const getSubscriptionUrl = '/sub/applications/v2/purchases/get';
@@ -28,18 +27,6 @@ const getSubscriptionRequest = {
     purchaseToken: '1111111111.1.11111',
     subscriptionId: '11111',
 };
-
-/*
- * get the root url
- * 
- * @param accountFlag  the accountFlag
- */
-var getRootUrl = function (accountFlag) {
-    if (accountFlag && accountFlag == 1) {
-        return TOBTOC_SITE_URL;
-    }
-    return TOC_SITE_URL;
-}
 
 /*
  * the callback of getSubscription
@@ -58,8 +45,8 @@ var getSubscriptionCallback = function (errorMsg, response) {
 };
 
 // execute the getSubscriptionRequest
-var getSubscription = function (accountFlag) {
-    AtDemo.getAppAtAndExecuteRequest(getRootUrl(accountFlag) + getSubscriptionUrl, getSubscriptionRequest, getSubscriptionCallback);
+var getSubscription = function () {
+    AtDemo.getAppAtAndExecuteRequest(TOC_SITE_URL + getSubscriptionUrl, getSubscriptionRequest, getSubscriptionCallback);
 };
 
 
@@ -88,8 +75,8 @@ var stopSubscriptionCallback = function (errorMsg, response) {
 };
 
 // execute the stopSubscriptionRequest
-var stopSubscription = function (accountFlag) {
-    AtDemo.getAppAtAndExecuteRequest(getRootUrl(accountFlag) + stopSubscriptionUrl, stopSubscriptionRequest, stopSubscriptionCallback);
+var stopSubscription = function () {
+    AtDemo.getAppAtAndExecuteRequest(TOC_SITE_URL + stopSubscriptionUrl, stopSubscriptionRequest, stopSubscriptionCallback);
 };
 
 
@@ -120,8 +107,8 @@ var delaySubscriptionCallback = function (errorMsg, response) {
 };
 
 // execute the delaySubscriptionRequest
-var delaySubscription = function (accountFlag) {
-    AtDemo.getAppAtAndExecuteRequest(getRootUrl(accountFlag) + delaySubscriptionUrl, delaySubscriptionRequest, delaySubscriptionCallback);
+var delaySubscription = function () {
+    AtDemo.getAppAtAndExecuteRequest(TOC_SITE_URL + delaySubscriptionUrl, delaySubscriptionRequest, delaySubscriptionCallback);
 };
 
 
@@ -150,8 +137,8 @@ var returnFeeSubscriptionCallback = function (errorMsg, response) {
 };
 
 // execute the returnFeeSubscriptionRequest
-var returnFeeSubscription = function (accountFlag) {
-    AtDemo.getAppAtAndExecuteRequest(getRootUrl(accountFlag) + returnFeeSubscriptionUrl, returnFeeSubscriptionRequest, returnFeeSubscriptionCallback);
+var returnFeeSubscription = function () {
+    AtDemo.getAppAtAndExecuteRequest(TOC_SITE_URL + returnFeeSubscriptionUrl, returnFeeSubscriptionRequest, returnFeeSubscriptionCallback);
 };
 
 // the request url
@@ -179,8 +166,8 @@ var withdrawalSubscriptionCallback = function (errorMsg, response) {
 };
 
 // execute the withdrawalSubscriptionRequest
-var withdrawalSubscription = function (accountFlag) {
-    AtDemo.getAppAtAndExecuteRequest(getRootUrl(accountFlag) + withdrawalSubscriptionUrl, withdrawalSubscriptionRequest, withdrawalSubscriptionCallback);
+var withdrawalSubscription = function () {
+    AtDemo.getAppAtAndExecuteRequest(TOC_SITE_URL + withdrawalSubscriptionUrl, withdrawalSubscriptionRequest, withdrawalSubscriptionCallback);
 };
 
 getSubscription(0);
