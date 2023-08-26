@@ -27,15 +27,9 @@ use Data::Dumper;
 # TODO: replace the (ip:port) to the real one, and if the protocol is https, you should deal with the license
 # yourself
 my $toc_site_url = "https://ip:port";
-# site for telecom carrier
-my $tobtoc_site_url = "https://subscr-at-dre.iap.cloud.huawei.eu";
 
 sub getRootUrl {
   print "getRootUrl\n";
-  my $accountFlag = $_[0];
-  if (defined($accountFlag) && $accountFlag == 1) {
-    return $tobtoc_site_url;
-  }
   return $toc_site_url;
 }
 
@@ -43,8 +37,7 @@ sub getSubscription {
   print "getSubscription\n";
   my $subscriptionId = $_[0];
   my $purchaseToken = $_[1];
-  my $accountFlag = $_[2];
-  my $root_url = getRootUrl($accountFlag);
+  my $root_url = getRootUrl();
   my $res = AtDemo::authPost("$root_url/sub/applications/v2/purchases/get", [
     subscriptionId => $subscriptionId,
     purchaseToken => $purchaseToken
@@ -58,8 +51,7 @@ sub stopSubscription {
   print "stopSubscription\n";
   my $subscriptionId = $_[0];
   my $purchaseToken = $_[1];
-  my $accountFlag = $_[2];
-  my $root_url = getRootUrl($accountFlag);
+  my $root_url = getRootUrl();
   my $res = AtDemo::authPost("$root_url/sub/applications/v2/purchases/stop", [
     subscriptionId => $subscriptionId,
     purchaseToken => $purchaseToken
@@ -75,8 +67,7 @@ sub delaySubscription {
   my $purchaseToken = $_[1];
   my $currentExpirationTime = $_[2];
   my $desiredExpirationTime = $_[3];
-  my $accountFlag = $_[4];
-  my $root_url = getRootUrl($accountFlag);
+  my $root_url = getRootUrl();
   my $res = AtDemo::authPost("$root_url/sub/applications/v2/purchases/delay", [
     subscriptionId => $subscriptionId,
     purchaseToken => $purchaseToken,
@@ -92,8 +83,7 @@ sub returnFeeSubscription {
   print "returnFeeSubscription\n";
   my $subscriptionId = $_[0];
   my $purchaseToken = $_[1];
-  my $accountFlag = $_[2];
-  my $root_url = getRootUrl($accountFlag);
+  my $root_url = getRootUrl();
   my $res = AtDemo::authPost("$root_url/sub/applications/v2/purchases/returnFee", [
     subscriptionId => $subscriptionId,
     purchaseToken => $purchaseToken
@@ -107,8 +97,7 @@ sub withdrawSubscription {
   print "withdrawSubscription\n";
   my $subscriptionId = $_[0];
   my $purchaseToken = $_[1];
-  my $accountFlag = $_[2];
-  my $root_url = getRootUrl($accountFlag);
+  my $root_url = getRootUrl();
   my $res = AtDemo::authPost("$root_url/sub/applications/v2/purchases/withdrawal", [
     subscriptionId => $subscriptionId,
     purchaseToken => $purchaseToken
