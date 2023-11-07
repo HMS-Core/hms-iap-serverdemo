@@ -35,7 +35,7 @@ class AppServer{
             return;
         }
         // verify the notification
-        $ok=RSA::doCheck($request->statusUpdateNotification,$request->notifycationSignature,$this->publicKey);
+        $ok=RSAUtil::doCheck($request->statusUpdateNotification,$request->notifycationSignature,$this->publicKey);
         if(!$ok) {
             $response->errorCode = 2; //failure
             $response->errorMsg = "verify the sign failure";
