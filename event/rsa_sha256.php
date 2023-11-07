@@ -16,7 +16,11 @@
  *
  */
 
-class RSA{
+require_once 'vendor/autoload.php';
+use phpseclib3\Crypt\PublicKeyLoader;
+use phpseclib3\Crypt\RSA;
+
+class RSAUtil{
     public static function generatePubKey($publicKey) {
         $begin_public = "-----BEGIN PUBLIC KEY-----\n";
         $end_public = "-----END PUBLIC KEY-----\n";
@@ -40,7 +44,7 @@ class RSA{
         return $sign;
     }
 
-    //verify
+    //verify with SHA256WithRSA
     public static function doCheck($content, $sign, $publicKey){
         if($sign == null){
             return false;
@@ -57,5 +61,13 @@ class RSA{
             $e->getMessage();
             return false;
         }
+    }
+
+    //verify with SHA256WithRSA/PSS
+    public static function doCheckPSS($dataToSign, $pubkey, $signature) {
+        $key = PublicKeyLoader::load(base64_decode($pubkey))->withHash('sha256')->withPadding(RSA::SIGNATURE_PSS);
+        $rsa = $key;
+        $res = $rsa->verify($dataToSign, base64_decode($signature));
+        echo $res;
     }
 }
